@@ -1,0 +1,31 @@
+-j 'android.net.ConnectivityManager!getNetworkInfo'
+
+-j 'android.net.NetworkInfo!getExtraInfo'
+-j 'android.net.NetworkInfo!getTypeName'
+-j 'android.net.NetworkInfo!isConnected'
+-j 'android.net.NetworkInfo!getState'
+
+-j 'android.net.wifi.WifiManage!setWifiEnabled'
+-j 'android.net.wifi.WifiManage!getWifiState'
+
+-j 'java.net.HttpURLConnection!setRequestMethod'
+-j 'java.net.HttpURLConnection!getInputStream'
+-j 'java.net.HttpURLConnection!getOutputStream'
+
+-j 'java.net.Socket!*'
+
+-j 'android.os.Handler!sendMessage'
+-j 'android.os.Process!myPid'
+-j 'android.os.Process!killProcess'
+
+-j 'java.io.DataOutputStrea!writeBytes'
+
+-j 'java.io.DataInputStream!readLines'
+-j 'java.io.DataInputStream!available'
+
+-j 'java.io.FileOutputStream!write'
+
+-j 'java.io.File!mkdir'
+-j 'java.io.File!delete'
+-j 'java.io.File!exists'
+-j 'java.io.File!listFiles'

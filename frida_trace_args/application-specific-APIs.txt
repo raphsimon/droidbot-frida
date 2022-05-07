@@ -1,0 +1,13 @@
+-j 'android.content.Intent!setDataAndType'
+-j 'android.content.Intent!setFlags'
+-j 'android.content.Intent!addFlags'
+
+-j 'android.content.Context!startService'
+-j 'android.content.Context!getFilesDir'
+-j 'android.content.Context!openFileOutput'
+-j 'android.content.Context!getApplicationInfo'
+-j 'android.content.Context!startService'
+
+-j 'android.content.Intent!setDataAndType'
+-j 'android.content.Intent!setFlags'
+-j 'android.content.Intent!addFlags'

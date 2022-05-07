@@ -1,0 +1,6 @@
+-j 'java.lang.ClassLoader!loadClass'
+
+-j 'java.lang.Runtime!exec'
+-j 'java.lang.Runtime!getRuntime'
+
+-j 'java.lang.System!loadLibrary'

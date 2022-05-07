@@ -1,0 +1,11 @@
+-j 'android.telephony.TelephonyManager!getSubscriberId'
+-j 'android.telephony.TelephonyManager!getDeviceId'
+-j 'android.telephony.TelephonyManager!getLine1Number'
+-j 'android.telephony.TelephonyManager!getSimSerialNumber'
+-j 'android.telephony.TelephonyManager!getNetworkOperator'
+-j 'android.telephony.TelephonyManager!getCellLocation'
+
+-j 'java.net.HttpURLConnection!setRequestMethod'
+-j 'java.net.HttpURLConnection!getInputStream'
+-j 'java.net.HttpURLConnection!getOutputStream'
+-j 'java.net.URL!$init'

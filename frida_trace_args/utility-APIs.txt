@@ -1,0 +1,15 @@
+-j 'java.lang.String*!replaceAll'
+-j 'java.lang.String*!substring'
+-j 'java.lang.String*!getBytes'
+-j 'java.lang.String*!reverse'
+-j 'java.lang.String*!indexOf'
+-j 'java.lang.String*!valueOf'
+-j 'java.lang.String*!append'
+
+-j java.util.Timer!schedule'
+-j java.util.Timer!cancel'
+
+-j 'java.util.zip.ZipInputStream!read'
+-j 'java.util.zip.ZipInputStream!close'
+-j 'java.util.zip.ZipInputStream!getNextEntry'
+-j 'java.util.zip.ZipInputStream!closeEntry'
