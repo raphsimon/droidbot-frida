@@ -27,7 +27,8 @@ class Device(object):
 
     def __init__(self, device_serial=None, is_emulator=False, output_dir=None,
                  cv_mode=False, grant_perm=False, telnet_auth_token=None,
-                 enable_accessibility_hard=False, humanoid=None, ignore_ad=False):
+                 enable_accessibility_hard=False, humanoid=None, ignore_ad=False,
+                 save_snapshot=True):
         """
         initialize a device connection
         :param device_serial: serial number of target device
@@ -56,6 +57,7 @@ class Device(object):
         self.enable_accessibility_hard = enable_accessibility_hard
         self.humanoid = humanoid
         self.ignore_ad = ignore_ad
+        self.save_snapshot = save_snapshot
 
         # basic device information
         self.settings = {}
@@ -82,7 +84,7 @@ class Device(object):
 
         self.adapters = {
             self.adb: True,
-            self.telnet: False,
+            self.telnet: True,
             self.droidbot_app: True,
             self.minicap: True,
             self.logcat: True,
@@ -138,9 +140,11 @@ class Device(object):
         self.wait_for_device()
         for adapter in self.adapters:
             adapter_enabled = self.adapters[adapter]
+            print(f"[DEBUG] In Device.set_up(): Setting up adapter {adapter} - is enabled: {adapter_enabled}")
             if not adapter_enabled:
                 continue
             adapter.set_up()
+        input()
 
     def connect(self):
         """
@@ -609,6 +613,7 @@ class Device(object):
         @param app: instance of App
         @return:
         """
+        # TODO save snapshot before installing the app
         assert isinstance(app, App)
         # subprocess.check_call(["adb", "-s", self.serial, "uninstall", app.get_package_name()],
         #                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -700,6 +705,7 @@ class Device(object):
         Uninstall an app from device.
         :param app: an instance of App or a package name
         """
+        # TODO insert save snapshot before uninstalling the app
         if isinstance(app, App):
             package_name = app.get_package_name()
         else:
@@ -906,3 +912,17 @@ class Device(object):
         if self.minicap.check_connectivity():
             print("[CONNECTION] %s is reconnected." % self.minicap.__class__.__name__)
         self.pause_sending_event = False
+
+    def check_frida_server_state(self):
+        ps_out = self.adb.shell(["ps", "-A", "|", "grep", "frida"])
+        ps_out_lines = ps_out.splitlines()
+        ps_out_head = ps_out_lines[0].split()
+        if ps_out_head[1] != "PID" or ps_out_head[-1] != "NAME":
+            self.logger.warning("ps command output format error: %s" % ps_out_head)
+        if len(ps_out_lines) > 1:
+            print(f"[DEBUG] Device.check_frida_server_state - Value of ps_out_lines: {ps_out_lines}")
+            return True
+        else:
+            print(f"[DEBUG] Device.check_frida_server_state - Value of ps_out_lines: {ps_out_lines}")
+            self.logger.warning("frida-trace is not running on the device")
+            return False
