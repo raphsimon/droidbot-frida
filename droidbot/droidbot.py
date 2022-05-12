@@ -5,6 +5,7 @@
 import logging
 import os
 import sys
+from itsdangerous import NoneAlgorithm
 import pkg_resources
 import shutil
 from threading import Timer
@@ -44,7 +45,9 @@ class DroidBot(object):
                  master=None,
                  humanoid=None,
                  ignore_ad=False,
-                 replay_output=None):
+                 replay_output=None,
+                 save_snapshot=False,
+                 telnet_auth_token_path=None):
         """
         initiate droidbot with configurations
         :return:
@@ -80,21 +83,30 @@ class DroidBot(object):
         self.humanoid = humanoid
         self.ignore_ad = ignore_ad
         self.replay_output = replay_output
+        self.save_snapshot = save_snapshot
+
+        print(f"Value of self.save_snapshot: {self.save_snapshot}")
 
         self.enabled = True
 
         try:
+            if telnet_auth_token_path is not None:
+                telnet_token = self.load_telnet_token(telnet_auth_token_path)
+
             self.device = Device(
                 device_serial=device_serial,
                 is_emulator=is_emulator,
                 output_dir=self.output_dir,
                 cv_mode=cv_mode,
                 grant_perm=grant_perm,
+                telnet_auth_token=telnet_token,
                 enable_accessibility_hard=self.enable_accessibility_hard,
                 humanoid=self.humanoid,
-                ignore_ad=ignore_ad)
-            self.app = App(app_path, output_dir=self.output_dir)
-
+                ignore_ad=ignore_ad,
+                save_snapshot=save_snapshot)
+            self.app = App(
+                app_path, 
+                output_dir=self.output_dir)
             self.env_manager = AppEnvManager(
                 device=self.device,
                 app=self.app,
@@ -140,8 +152,8 @@ class DroidBot(object):
 
             if not self.enabled:
                 return
-            self.device.connect()
-
+            self.device.connect() # Establish connections to this device, this
+                                  # means connecting the different adapters
             if not self.enabled:
                 return
             self.device.install_app(self.app)
@@ -194,6 +206,14 @@ class DroidBot(object):
             proxy = xmlrpc.client.ServerProxy(self.input_manager.policy.master)
             proxy.stop_worker(self.device.serial)
 
+    def load_telnet_token(self, token_path):
+        try:
+            with open(token_path, 'r') as fileObj:
+                token = fileObj.read().strip()
+                return token
+        except FileNotFoundError:
+            self.logger.error('"{}" does not exist'.format(token_path))
+            return None
 
 class DroidBotException(Exception):
     pass
