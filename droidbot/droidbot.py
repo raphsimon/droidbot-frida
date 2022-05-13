@@ -85,14 +85,13 @@ class DroidBot(object):
         self.replay_output = replay_output
         self.save_snapshot = save_snapshot
 
-        print(f"Value of self.save_snapshot: {self.save_snapshot}")
-
         self.enabled = True
 
-        try:
-            if telnet_auth_token_path is not None:
-                telnet_token = self.load_telnet_token(telnet_auth_token_path)
+        telnet_token = None
+        if telnet_auth_token_path is not None:
+            telnet_token = self.load_telnet_token(telnet_auth_token_path)
 
+        try:
             self.device = Device(
                 device_serial=device_serial,
                 is_emulator=is_emulator,
@@ -158,6 +157,8 @@ class DroidBot(object):
                 return
             self.device.install_app(self.app)
 
+            input("droidbot.py stopped execution")
+
             if not self.enabled:
                 return
             self.env_manager.deploy()
@@ -212,8 +213,7 @@ class DroidBot(object):
                 token = fileObj.read().strip()
                 return token
         except FileNotFoundError:
-            self.logger.error('"{}" does not exist'.format(token_path))
-            return None
+            self.logger.error('"{}" does not exist. Telnet connection will be disabled.'.format(token_path))
 
 class DroidBotException(Exception):
     pass
