@@ -85,7 +85,7 @@ class Device(object):
         self.adapters = {
             self.adb: True,
             self.telnet: True,
-            self.droidbot_app: True,
+            self.droidbot_app: False,
             self.minicap: True,
             self.logcat: True,
             self.user_input_monitor: True,
@@ -140,11 +140,10 @@ class Device(object):
         self.wait_for_device()
         for adapter in self.adapters:
             adapter_enabled = self.adapters[adapter]
-            print(f"[DEBUG] In Device.set_up(): Setting up adapter {adapter} - is enabled: {adapter_enabled}")
+            #print(f"[DEBUG] In Device.set_up(): Setting up adapter {adapter} - is enabled: {adapter_enabled}")
             if not adapter_enabled:
                 continue
             adapter.set_up()
-        input()
 
     def connect(self):
         """
@@ -155,7 +154,9 @@ class Device(object):
             adapter_enabled = self.adapters[adapter]
             if not adapter_enabled:
                 continue
+            print(f"[DEBUG] Trying to connect {adapter}")
             adapter.connect()
+            print(f"[DEBUG] {adapter} connected successfully")
 
         self.get_sdk_version()
         self.get_release_version()
@@ -619,6 +620,9 @@ class Device(object):
         #                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         package_name = app.get_package_name()
         if package_name not in self.adb.get_installed_apps():
+            # Save a snapshot of the device before installing the application
+            if self.save_snapshot and self.telnet.check_connectivity():
+                self.telnet.run_cmd(["avd", "snapshot", "save", f"before_{package_name}_infection"])
             install_cmd = ["adb", "-s", self.serial, "install", "-r"]
             if self.grant_perm and self.get_sdk_version() >= 23:
                 install_cmd.append("-g")
@@ -705,12 +709,18 @@ class Device(object):
         Uninstall an app from device.
         :param app: an instance of App or a package name
         """
-        # TODO insert save snapshot before uninstalling the app
         if isinstance(app, App):
             package_name = app.get_package_name()
         else:
             package_name = app
         if package_name in self.adb.get_installed_apps():
+            
+            if self.save_snapshot and self.telnet.check_connectivity():
+                # Save a snapshot of the (potentially infected) device before
+                # uninstalling the app
+                self.telnet.run_cmd(["avd", "snapshot", "save", 
+                                    f"after_{package_name}_infection"])
+            
             uninstall_cmd = ["adb", "-s", self.serial, "uninstall", package_name]
             uninstall_p = subprocess.Popen(uninstall_cmd, stdout=subprocess.PIPE)
             while package_name in self.adb.get_installed_apps():
