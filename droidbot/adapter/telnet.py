@@ -68,10 +68,11 @@ class TelnetConsole(Adapter):
         cmd_line += '\n'
 
         self.__lock__.acquire()
-        self.console.write(cmd_line)
-        r = self.console.read_until('OK', 5)
+        print(f"[DEBUG] telnet.py - Command to run: {cmd_line}")
+        self.console.write(cmd_line.encode("utf-8"))
+        r = self.console.read_until(b'OK', 5)
         # eat the rest outputs
-        self.console.read_until('NEVER MATCH', 1)
+        self.console.read_until(b'NEVER MATCH', 1)
         self.__lock__.release()
 
         self.logger.debug('return:')
