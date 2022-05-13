@@ -89,6 +89,18 @@ def parse_args():
                         help="Ignore Ad views by checking resource_id.")
     parser.add_argument("-replay_output", action="store", dest="replay_output",
                         help="The droidbot output directory being replayed.")
+    # for the addition of frida-trace
+    parser.add_argument("-java_methods", action="store", dest="java_methods",
+                        help="Java methods to trace during application execution.")
+    parser.add_argument("-native_functions", action="store", dest="native_functions",
+                        help="Native functions to trace during application execution.")
+    parser.add_argument("-jni_functions", action="store", dest="jni_functions",
+                        help="JNI functions to trace during application execution.")
+    # to save snapshots
+    parser.add_argument('-save_snapshot', action="store_true", dest="save_snapshot",
+                        help="Save a snapshot before installing an application")
+    parser.add_argument('-telnet_token_path', action="store", dest="telnet_token_path",
+                        help="Path to the telnet token in order to establish a telnet connection to the device")
     options = parser.parse_args()
     # print options
     return options
@@ -165,7 +177,9 @@ def main():
             master=opts.master,
             humanoid=opts.humanoid,
             ignore_ad=opts.ignore_ad,
-            replay_output=opts.replay_output)
+            replay_output=opts.replay_output,
+            telnet_auth_token_path=opts.telnet_token_path,
+            save_snapshot=opts.save_snapshot)
         droidbot.start()
     return
 
