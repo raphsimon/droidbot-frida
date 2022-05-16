@@ -5,6 +5,7 @@ from droidbot import input_manager
 from droidbot import input_policy
 from droidbot import env_manager
 from droidbot import DroidBot
+from droidbot.adapter import frida_trace
 from droidbot.droidmaster import DroidMaster
 
 
@@ -90,12 +91,10 @@ def parse_args():
     parser.add_argument("-replay_output", action="store", dest="replay_output",
                         help="The droidbot output directory being replayed.")
     # for the addition of frida-trace
-    parser.add_argument("-java_methods", action="store", dest="java_methods",
-                        help="Java methods to trace during application execution.")
-    parser.add_argument("-native_functions", action="store", dest="native_functions",
-                        help="Native functions to trace during application execution.")
-    parser.add_argument("-jni_functions", action="store", dest="jni_functions",
-                        help="JNI functions to trace during application execution.")
+    parser.add_argument("-frida_trace_args", action="store", dest="frida_trace_args",
+                        help="File containing the arguments for frida-trace. These are the functions, methods etc. that frida-trace shall take into account.\nSee frida_trace_args/ for examples")
+    parser.add_argument("-frida_trace_out", action="store", dest="frida_trace_out",
+                        help="Path to output frida-trace results")
     # to save snapshots
     parser.add_argument('-save_snapshot', action="store_true", dest="save_snapshot",
                         help="Save a snapshot before installing an application")
@@ -178,6 +177,8 @@ def main():
             humanoid=opts.humanoid,
             ignore_ad=opts.ignore_ad,
             replay_output=opts.replay_output,
+            frida_trace_args=opts.frida_trace_args,
+            frida_trace_out=opts.frida_trace_out,
             telnet_auth_token_path=opts.telnet_token_path,
             save_snapshot=opts.save_snapshot)
         droidbot.start()
