@@ -69,6 +69,7 @@ class DeviceState(object):
 
     def __assemble_view_tree(self, root_view, views):
         if not len(self.view_tree): # bootstrap
+            # TODO find fix, this line can provoke crashes
             self.view_tree = copy.deepcopy(views[0])
             self.__assemble_view_tree(self.view_tree, views)
         else:
