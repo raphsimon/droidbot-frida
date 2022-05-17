@@ -13,6 +13,7 @@ from .adapter.process_monitor import ProcessMonitor
 from .adapter.telnet import TelnetConsole
 from .adapter.user_input_monitor import UserInputMonitor
 from .adapter.droidbot_ime import DroidBotIme
+from .adapter.frida_trace import FridaTrace
 from .app import App
 from .intent import Intent
 
@@ -28,7 +29,7 @@ class Device(object):
     def __init__(self, device_serial=None, is_emulator=False, output_dir=None,
                  cv_mode=False, grant_perm=False, telnet_auth_token=None,
                  enable_accessibility_hard=False, humanoid=None, ignore_ad=False,
-                 save_snapshot=True):
+                 frida_trace_args=None, frida_trace_out=None, save_snapshot=False):
         """
         initialize a device connection
         :param device_serial: serial number of target device
@@ -81,16 +82,19 @@ class Device(object):
         self.user_input_monitor = UserInputMonitor(device=self)
         self.process_monitor = ProcessMonitor(device=self)
         self.droidbot_ime = DroidBotIme(device=self)
+        self.frida_trace = FridaTrace(device=self, target_functions=frida_trace_args,
+                                      output=frida_trace_out)
 
         self.adapters = {
             self.adb: True,
             self.telnet: True,
-            self.droidbot_app: False,
+            self.droidbot_app: True,
             self.minicap: True,
             self.logcat: True,
             self.user_input_monitor: True,
             self.process_monitor: True,
-            self.droidbot_ime: True
+            self.droidbot_ime: True,
+            self.frida_trace: True
         }
 
         # minicap currently not working on emulators
@@ -614,15 +618,17 @@ class Device(object):
         @param app: instance of App
         @return:
         """
-        # TODO save snapshot before installing the app
         assert isinstance(app, App)
         # subprocess.check_call(["adb", "-s", self.serial, "uninstall", app.get_package_name()],
         #                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         package_name = app.get_package_name()
+        self.frida_trace.set_app_to_trace(package_name)
+
         if package_name not in self.adb.get_installed_apps():
             # Save a snapshot of the device before installing the application
             if self.save_snapshot and self.telnet.check_connectivity():
-                self.telnet.run_cmd(["avd", "snapshot", "save", f"before_{package_name}_infection"])
+                print("[DEBUG] Device.install_app() - save_snapshot is disabled for debugging")
+                #self.telnet.run_cmd(["avd", "snapshot", "save", f"before_{package_name}_infection"])
             install_cmd = ["adb", "-s", self.serial, "install", "-r"]
             if self.grant_perm and self.get_sdk_version() >= 23:
                 install_cmd.append("-g")
@@ -924,15 +930,16 @@ class Device(object):
         self.pause_sending_event = False
 
     def check_frida_server_state(self):
-        ps_out = self.adb.shell(["ps", "-A", "|", "grep", "frida"])
+        ps_out = self.adb.shell(['ps', '-A'])#, '|', 'grep', 'frida'])
         ps_out_lines = ps_out.splitlines()
         ps_out_head = ps_out_lines[0].split()
         if ps_out_head[1] != "PID" or ps_out_head[-1] != "NAME":
             self.logger.warning("ps command output format error: %s" % ps_out_head)
-        if len(ps_out_lines) > 1:
-            print(f"[DEBUG] Device.check_frida_server_state - Value of ps_out_lines: {ps_out_lines}")
+        
+        frida_occurences = [line for line in ps_out_lines if 'frida' in line]
+
+        if frida_occurences:
             return True
         else:
-            print(f"[DEBUG] Device.check_frida_server_state - Value of ps_out_lines: {ps_out_lines}")
-            self.logger.warning("frida-trace is not running on the device")
+            self.logger.warning("frida-server is not running on the device. Deactivating frida-trace functionality")
             return False
