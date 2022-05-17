@@ -46,8 +46,10 @@ class DroidBot(object):
                  humanoid=None,
                  ignore_ad=False,
                  replay_output=None,
-                 save_snapshot=False,
-                 telnet_auth_token_path=None):
+                 frida_trace_args=None,
+                 frida_trace_out=None,
+                 telnet_auth_token_path=None,
+                 save_snapshot=False):
         """
         initiate droidbot with configurations
         :return:
@@ -102,6 +104,8 @@ class DroidBot(object):
                 enable_accessibility_hard=self.enable_accessibility_hard,
                 humanoid=self.humanoid,
                 ignore_ad=ignore_ad,
+                frida_trace_args=frida_trace_args,
+                frida_trace_out=frida_trace_out,
                 save_snapshot=save_snapshot)
             self.app = App(
                 app_path, 
@@ -121,6 +125,7 @@ class DroidBot(object):
                 profiling_method=profiling_method,
                 master=master,
                 replay_output=replay_output)
+            
         except Exception:
             import traceback
             traceback.print_exc()
@@ -156,8 +161,6 @@ class DroidBot(object):
             if not self.enabled:
                 return
             self.device.install_app(self.app)
-
-            input("droidbot.py stopped execution")
 
             if not self.enabled:
                 return
