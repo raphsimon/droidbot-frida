@@ -43,7 +43,7 @@ class InputManager(object):
 
         self.device = device
         self.app = app
-        self.policy_name = policy_name
+        self.policy_name = policy_name # Default value is: 'dfs_greedy'
         self.random_input = random_input
         self.events = []
         self.policy = None
@@ -71,6 +71,7 @@ class InputManager(object):
         elif self.policy_name in [POLICY_NAIVE_DFS, POLICY_NAIVE_BFS]:
             input_policy = UtgNaiveSearchPolicy(device, app, self.random_input, self.policy_name)
         elif self.policy_name in [POLICY_GREEDY_DFS, POLICY_GREEDY_BFS]:
+            # If no choice is specified by the user, this is the default one
             input_policy = UtgGreedySearchPolicy(device, app, self.random_input, self.policy_name)
         elif self.policy_name == POLICY_MEMORY_GUIDED:
             from .input_policy2 import MemoryGuidedPolicy
