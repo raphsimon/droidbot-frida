@@ -31,7 +31,7 @@ class FridaTrace(Adapter):
 
     def build_command(self):
         if self.target_app and self.target_functions:        
-            self.command.append("frida-trace", "-U", "-O", self.target_frunctions,
+            self.command.append("frida-trace", "-U", "-O", self.target_functions,
                                 "-f", self.target_app,
                                 "-o", self.output)
         else:
@@ -39,8 +39,8 @@ class FridaTrace(Adapter):
 
 
     def start_tracing(self):
+        self.build_command()
         if self.command and self.ready:
-            self.build_command()
             self.logger.info(f'Running frida-trace command: {self.command}')
             self.process = Popen(self.command, self.output)
         else:
