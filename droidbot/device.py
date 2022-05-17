@@ -627,8 +627,7 @@ class Device(object):
         if package_name not in self.adb.get_installed_apps():
             # Save a snapshot of the device before installing the application
             if self.save_snapshot and self.telnet.check_connectivity():
-                print("[DEBUG] Device.install_app() - save_snapshot is disabled for debugging")
-                #self.telnet.run_cmd(["avd", "snapshot", "save", f"before_{package_name}_infection"])
+                self.telnet.run_cmd(["avd", "snapshot", "save", f"before_{package_name}_infection"])
             install_cmd = ["adb", "-s", self.serial, "install", "-r"]
             if self.grant_perm and self.get_sdk_version() >= 23:
                 install_cmd.append("-g")
