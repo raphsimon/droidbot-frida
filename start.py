@@ -93,8 +93,8 @@ def parse_args():
     # for the addition of frida-trace
     parser.add_argument("-frida_trace_args", action="store", dest="frida_trace_args",
                         help="File containing the arguments for frida-trace. These are the functions, methods etc. that frida-trace shall take into account.\nSee frida_trace_args/ for examples")
-    parser.add_argument("-frida_trace_out", action="store", dest="frida_trace_out",
-                        help="Path to output frida-trace results")
+    parser.add_argument("-frida_trace_out", action="store", dest="frida_trace_out", default='frida_out',
+                        help="Path to output frida-trace results. Per default results will be stored in a file named 'frida_out'")
     # to save snapshots
     parser.add_argument('-save_snapshot', action="store_true", dest="save_snapshot",
                         help="Save a snapshot before installing an application")
