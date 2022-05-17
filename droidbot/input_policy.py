@@ -7,6 +7,9 @@ from abc import abstractmethod
 from .input_event import InputEvent, KeyEvent, IntentEvent, TouchEvent, ManualEvent, SetTextEvent, KillAppEvent
 from .utg import UTG
 
+# For frida-trace
+from subprocess import Popen, PIPE
+
 # Max number of restarts
 MAX_NUM_RESTARTS = 5
 # Max number of steps outside the app
@@ -136,7 +139,6 @@ class UtgBasedInputPolicy(InputPolicy):
         generate an event
         @return:
         """
-
         # Get current device state
         self.current_state = self.device.get_current_state()
         if self.current_state is None:
@@ -147,6 +149,7 @@ class UtgBasedInputPolicy(InputPolicy):
         self.__update_utg()
 
         # update last view trees for humanoid
+        # by default device.humanoid is None
         if self.device.humanoid is not None:
             self.humanoid_view_trees = self.humanoid_view_trees + [self.current_state.view_tree]
             if len(self.humanoid_view_trees) > 4:
@@ -407,6 +410,11 @@ class UtgGreedySearchPolicy(UtgBasedInputPolicy):
                 else:
                     # Start the app
                     self.__event_trace += EVENT_FLAG_START_APP
+
+                    # Start the application with frida-trace to be able to trace events from
+                    # the very beginning of the application's life-cycle
+                    self.device.frida_trace.start_tracing()
+
                     self.logger.info("Trying to start the app...")
                     return IntentEvent(intent=start_app_intent)
 
