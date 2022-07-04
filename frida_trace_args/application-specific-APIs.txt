@@ -8,6 +8,6 @@
 -j 'android.content.Context!getApplicationInfo'
 -j 'android.content.Context!startService'
 
--j 'android.content.Intent!setDataAndType'
--j 'android.content.Intent!setFlags'
--j 'android.content.Intent!addFlags'
+-j 'android.content.ContentResolver!insert'
+-j 'android.content.ContentResolver!query'
+-j 'android.content.ContentResolver!delete'
