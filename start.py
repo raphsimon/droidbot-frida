@@ -1,6 +1,8 @@
 # helper file of droidbot
 # it parses command arguments and send the options to droidbot
+import os
 import argparse
+import time
 from droidbot import input_manager
 from droidbot import input_policy
 from droidbot import env_manager
@@ -94,7 +96,7 @@ def parse_args():
     parser.add_argument("-frida_trace_args", action="store", dest="frida_trace_args",
                         help="File containing the arguments for frida-trace. These are the functions, methods and so on \nthat frida-trace shall take into account.\nSee frida_trace_args/ for examples")
     parser.add_argument("-frida_trace_out", action="store", dest="frida_trace_out", default='frida_out',
-                        help="Path to output frida-trace results. Per default results will be stored in a file named 'frida_out'")
+                        help="Path to directory where frida-trace results will be saved")
     # to save snapshots
     parser.add_argument('-save_snapshot', action="store_true", dest="save_snapshot",
                         help="Save a snapshot before installing an application")
@@ -111,9 +113,9 @@ def main():
     it starts a droidbot according to the arguments given in cmd line
     """
     opts = parse_args()
-    import os
+    
     if not os.path.exists(opts.apk_path):
-        print("APK does not exist.")
+        print("Path to APK(s) does not exist.")
         return
     if not opts.output_dir and opts.cv_mode:
         print("To run in CV mode, you need to specify an output dir (using -o option).")
@@ -153,35 +155,74 @@ def main():
             replay_output=opts.replay_output)
         droidmaster.start()
     else:
-        droidbot = DroidBot(
-            app_path=opts.apk_path,
-            device_serial=opts.device_serial,
-            is_emulator=opts.is_emulator,
-            output_dir=opts.output_dir,
-            # env_policy=opts.env_policy,
-            env_policy=env_manager.POLICY_NONE,
-            policy_name=opts.input_policy,
-            random_input=opts.random_input,
-            script_path=opts.script_path,
-            event_interval=opts.interval,
-            timeout=opts.timeout,
-            event_count=opts.count,
-            cv_mode=opts.cv_mode,
-            debug_mode=opts.debug_mode,
-            keep_app=opts.keep_app,
-            keep_env=opts.keep_env,
-            profiling_method=opts.profiling_method,
-            grant_perm=opts.grant_perm,
-            enable_accessibility_hard=opts.enable_accessibility_hard,
-            master=opts.master,
-            humanoid=opts.humanoid,
-            ignore_ad=opts.ignore_ad,
-            replay_output=opts.replay_output,
-            frida_trace_args=opts.frida_trace_args,
-            frida_trace_out=opts.frida_trace_out,
-            telnet_auth_token_path=opts.telnet_token_path,
-            save_snapshot=opts.save_snapshot)
-        droidbot.start()
+        if not os.path.isdir(opts.apk_path):
+            droidbot = DroidBot(
+                app_path=opts.apk_path,
+                device_serial=opts.device_serial,
+                is_emulator=opts.is_emulator,
+                output_dir=opts.output_dir,
+                # env_policy=opts.env_policy,
+                env_policy=env_manager.POLICY_NONE,
+                policy_name=opts.input_policy,
+                random_input=opts.random_input,
+                script_path=opts.script_path,
+                event_interval=opts.interval,
+                timeout=opts.timeout,
+                event_count=opts.count,
+                cv_mode=opts.cv_mode,
+                debug_mode=opts.debug_mode,
+                keep_app=opts.keep_app,
+                keep_env=opts.keep_env,
+                profiling_method=opts.profiling_method,
+                grant_perm=opts.grant_perm,
+                enable_accessibility_hard=opts.enable_accessibility_hard,
+                master=opts.master,
+                humanoid=opts.humanoid,
+                ignore_ad=opts.ignore_ad,
+                replay_output=opts.replay_output,
+                frida_trace_args=opts.frida_trace_args,
+                frida_trace_out=opts.frida_trace_out,
+                telnet_auth_token_path=opts.telnet_token_path,
+                save_snapshot=opts.save_snapshot)
+            droidbot.start()
+        elif os.path.isdir(opts.apk_path):
+            # We are going to treat every application within that folder:
+            directory = os.fsdecode(opts.apk_path)
+
+            for file in os.listdir(directory):
+                file_name = os.fsdecode(file)
+                file_path = os.path.abspath(directory + file_name)
+
+                if file_name.endswith('.apk'):
+                    droidbot = DroidBot(
+                        app_path=file_path,
+                        device_serial=opts.device_serial,
+                        is_emulator=opts.is_emulator,
+                        output_dir=opts.output_dir,
+                        # env_policy=opts.env_policy,
+                        env_policy=env_manager.POLICY_NONE,
+                        policy_name=opts.input_policy,
+                        random_input=opts.random_input,
+                        script_path=opts.script_path,
+                        event_interval=opts.interval,
+                        timeout=opts.timeout,
+                        event_count=opts.count,
+                        cv_mode=opts.cv_mode,
+                        debug_mode=opts.debug_mode,
+                        keep_app=opts.keep_app,
+                        keep_env=opts.keep_env,
+                        profiling_method=opts.profiling_method,
+                        grant_perm=opts.grant_perm,
+                        enable_accessibility_hard=opts.enable_accessibility_hard,
+                        master=opts.master,
+                        humanoid=opts.humanoid,
+                        ignore_ad=opts.ignore_ad,
+                        frida_trace_args=opts.frida_trace_args,
+                        frida_trace_out=opts.frida_trace_out,
+                        telnet_auth_token_path=opts.telnet_token_path,
+                        save_snapshot=opts.save_snapshot)
+                    droidbot.start()
+                    time.sleep(5)
     return
 
 
