@@ -62,3 +62,6 @@ Gemfile.lock
 .DS_Store
 documents
 temp
+
+## Misc.
+analysis_results/
