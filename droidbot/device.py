@@ -17,8 +17,11 @@ from .adapter.frida_trace import FridaTrace
 from .app import App
 from .intent import Intent
 
-DEFAULT_NUM = '1234567890'
-DEFAULT_CONTENT = 'Hello world!'
+DEFAULT_NUM = '9000'
+DEFAULT_CONTENT = 'Dear client, this is a reminder that your monthly mobile data \
+                    of 1.5MB is almost entirely consumed. You have 183MB left. \
+                    Surpassing your allocated data will result in additional fees.'
+DEFAULT_SNAPSHOT = "analysis_ready"
 
 
 class Device(object):
@@ -83,7 +86,7 @@ class Device(object):
         self.process_monitor = ProcessMonitor(device=self)
         self.droidbot_ime = DroidBotIme(device=self)
         self.frida_trace = FridaTrace(device=self, target_functions=frida_trace_args,
-                                      output=frida_trace_out)
+                                      output_path=frida_trace_out)
 
         self.adapters = {
             self.adb: True,
@@ -179,10 +182,11 @@ class Device(object):
         """
         self.connected = False
         for adapter in self.adapters:
-            adapter_enabled = self.adapters[adapter]
-            if not adapter_enabled:
-                continue
-            adapter.disconnect()
+            if adapter != self.telnet:
+                adapter_enabled = self.adapters[adapter]
+                if not adapter_enabled:
+                    continue
+                adapter.disconnect()
 
         if self.output_dir is not None:
             temp_dir = os.path.join(self.output_dir, "temp")
@@ -719,19 +723,31 @@ class Device(object):
         else:
             package_name = app
         if package_name in self.adb.get_installed_apps():
-            
-            if self.save_snapshot and self.telnet.check_connectivity():
-                # Save a snapshot of the (potentially infected) device before
-                # uninstalling the app
-                self.telnet.run_cmd(["avd", "snapshot", "save", 
-                                    f"after_{package_name}_infection"])
-            
+
+            device_restored = False
+            uninstall_counter = 0
             uninstall_cmd = ["adb", "-s", self.serial, "uninstall", package_name]
             uninstall_p = subprocess.Popen(uninstall_cmd, stdout=subprocess.PIPE)
+
             while package_name in self.adb.get_installed_apps():
+                uninstall_counter += 1
                 print("Please wait while uninstalling the app...")
                 time.sleep(2)
+                print(f"Uninstall counter: {uninstall_counter}")
+                if uninstall_counter >= 3:
+                    uninstall_p.kill()
+                    self.logger.info("Uninstalling failed, loading previous snapshot")
+                    self.telnet.run_cmd(["avd", "snapshot", "load", DEFAULT_SNAPSHOT])   
+                    time.sleep(8)   # Sleep to wait that the snapshot was loaded before the
+                                    # connections to the device got torn down
+                    device_restored = True
+
+            if not device_restored:
+                self.telnet.run_cmd(["avd", "snapshot", "load", DEFAULT_SNAPSHOT]) 
+                time.sleep(8)
+
             uninstall_p.terminate()
+            self.telnet.disconnect()
 
     def get_app_pid(self, app):
         if isinstance(app, App):
