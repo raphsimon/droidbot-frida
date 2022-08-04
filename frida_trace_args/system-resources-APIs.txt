@@ -5,8 +5,8 @@
 -j 'android.net.NetworkInfo!isConnected'
 -j 'android.net.NetworkInfo!getState'
 
--j 'android.net.wifi.WifiManage!setWifiEnabled'
--j 'android.net.wifi.WifiManage!getWifiState'
+-j 'android.net.wifi.WifiManager!setWifiEnabled'
+-j 'android.net.wifi.WifiManager!getWifiState'
 
 -j 'java.net.HttpURLConnection!setRequestMethod'
 -j 'java.net.HttpURLConnection!getInputStream'
