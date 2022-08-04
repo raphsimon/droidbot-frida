@@ -1,5 +1,5 @@
--O android-framework-APIs.txt
--O application-specific-APIs.txt
--O DVM-Resources-APIs.txt
--O system-resources-APIs.txt
--O utility-APIs.txt
+-O frida_trace_args/android-framework-APIs.txt
+-O frida_trace_args/application-specific-APIs.txt
+-O frida_trace_args/DVM-Resources-APIs.txt
+-O frida_trace_args/system-resources-APIs.txt
+-O frida_trace_args/utility-APIs.txt
