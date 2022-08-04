@@ -1,0 +1,83 @@
+-j 'java.lang.ClassLoader!loadClass'
+
+-j 'java.lang.Runtime!exec'
+-j 'java.lang.Runtime!getRuntime'
+
+-j 'java.lang.System!loadLibrary'
+
+-j 'android.app.ActivityManager!getRunningServices'
+-j 'android.app.ActivityManager!getMemoryInfo'
+-j 'android.app.ActivityManager!restartPackage'
+
+-j 'android.content.pm.PackageManager!getInstalledPackages'
+
+-j 'android.telephony.SmsManager!send*Message'
+
+-j 'android.telephony.TelephonyManager!getSubscriberId'
+-j 'android.telephony.TelephonyManager!getDeviceId'
+-j 'android.telephony.TelephonyManager!getLine1Number'
+-j 'android.telephony.TelephonyManager!getSimSerialNumber'
+-j 'android.telephony.TelephonyManager!getNetworkOperator'
+-j 'android.telephony.TelephonyManager!getCellLocation'
+
+-j 'android.content.Intent!setDataAndType'
+-j 'android.content.Intent!setFlags'
+-j 'android.content.Intent!addFlags'
+
+-j 'android.content.Context!startService'
+-j 'android.content.Context!getFilesDir'
+-j 'android.content.Context!openFileOutput'
+-j 'android.content.Context!getApplicationInfo'
+
+-j 'android.content.ContentResolver!insert'
+-j 'android.content.ContentResolver!query'
+-j 'android.content.ContentResolver!delete'
+
+-j 'android.net.ConnectivityManager!getNetworkInfo'
+
+-j 'android.net.NetworkInfo!getExtraInfo'
+-j 'android.net.NetworkInfo!getTypeName'
+-j 'android.net.NetworkInfo!isConnected'
+-j 'android.net.NetworkInfo!getState'
+
+-j 'android.net.wifi.WifiManager!setWifiEnabled'
+-j 'android.net.wifi.WifiManager!getWifiState'
+
+-j 'java.net.HttpURLConnection!setRequestMethod'
+-j 'java.net.HttpURLConnection!getInputStream'
+-j 'java.net.HttpURLConnection!getOutputStream'
+
+-j 'java.net.URL!$init'
+
+-j 'java.net.Socket!*'
+
+-j 'android.os.Handler!sendMessage'
+-j 'android.os.Process!myPid'
+-j 'android.os.Process!killProcess'
+
+-j 'java.io.DataOutputStream!writeBytes'
+
+-j 'java.io.DataInputStream!readLines'
+
+-j 'java.io.FileOutputStream!write'
+
+-j 'java.io.File!mkdir'
+-j 'java.io.File!delete'
+-j 'java.io.File!exists'
+-j 'java.io.File!listFiles'
+
+-j java.util.Timer!schedule'
+-j java.util.Timer!cancel'
+
+-j 'java.util.zip.ZipInputStream!read'
+-j 'java.util.zip.ZipInputStream!close'
+-j 'java.util.zip.ZipInputStream!getNextEntry'
+-j 'java.util.zip.ZipInputStream!closeEntry'
+
+-j 'java.lang.String*!replaceAll'
+-j 'java.lang.String*!substring'
+-j 'java.lang.String*!getBytes'
+-j 'java.lang.String*!reverse'
+-j 'java.lang.String*!indexOf'
+-j 'java.lang.String*!valueOf'
+-j 'java.lang.String*!append'
