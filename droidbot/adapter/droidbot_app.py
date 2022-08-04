@@ -17,14 +17,14 @@ GET_VIEW_WAIT_TIME = 1
 
 class DroidBotAppConnException(Exception):
     """
-    Exception in telnet connection
+    Exception in DroidBot app connection
     """
     pass
 
 
 class EOF(Exception):
     """
-    Exception in telnet connection
+    Exception in EOF
     """
     pass
 
