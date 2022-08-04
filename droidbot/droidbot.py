@@ -152,7 +152,7 @@ class DroidBot(object):
                 self.timer = Timer(self.timeout, self.stop)
                 self.timer.start()
 
-            self.device.set_up()
+            self.device.set_up()  # Goes over all the adapters and starts them up
 
             if not self.enabled:
                 return
@@ -198,10 +198,10 @@ class DroidBot(object):
             self.input_manager.stop()
         if self.droidbox:
             self.droidbox.stop()
-        if self.device:
-            self.device.disconnect()
         if not self.keep_env:
             self.device.tear_down()
+        if self.device:
+            self.device.disconnect()
         if not self.keep_app:
             self.device.uninstall_app(self.app)
         if hasattr(self.input_manager.policy, "master") and \
