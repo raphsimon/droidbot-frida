@@ -11,7 +11,7 @@ IME_SERVICE = DROIDBOT_APP_PACKAGE + "/.DroidBotIME"
 
 class DroidBotImeException(Exception):
     """
-    Exception in telnet connection
+    Exception in DroidBotIme connection
     """
     pass
 
