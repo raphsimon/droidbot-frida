@@ -44,7 +44,7 @@ class FridaTrace(Adapter):
         self.build_command()
         if self.command and self.ready:
             self.logger.info(f'Running frida-trace command: {self.command}')
-            self.process = Popen(self.command, stderr=PIPE, stdout=PIPE)
+            self.process = Popen(self.command)
         else:
             if not self.command:
                 self.logger.error("Command is not set")
