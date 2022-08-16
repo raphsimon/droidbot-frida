@@ -8,4 +8,5 @@
 -j 'java.net.HttpURLConnection!setRequestMethod'
 -j 'java.net.HttpURLConnection!getInputStream'
 -j 'java.net.HttpURLConnection!getOutputStream'
--j 'java.net.URL!$init'
+-j 'java.net.URL!*'
+-j 'java.net.HttpURLConnection!*'

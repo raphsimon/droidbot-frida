@@ -1,3 +1,11 @@
+-i 'ptrace'
+-i 'open'
+-i 'write'
+-i 'read'
+-i 'ioctl'
+-i 'memset'
+-i 'exec*'
+
 -j 'java.lang.ClassLoader!loadClass'
 
 -j 'java.lang.Runtime!exec'
@@ -40,16 +48,7 @@
 -j 'android.net.NetworkInfo!isConnected'
 -j 'android.net.NetworkInfo!getState'
 
--j 'android.net.wifi.WifiManager!setWifiEnabled'
--j 'android.net.wifi.WifiManager!getWifiState'
-
--j 'java.net.HttpURLConnection!setRequestMethod'
--j 'java.net.HttpURLConnection!getInputStream'
--j 'java.net.HttpURLConnection!getOutputStream'
-
 -j 'java.net.URL!$init'
-
--j 'java.net.Socket!*'
 
 -j 'android.os.Handler!sendMessage'
 -j 'android.os.Process!myPid'
@@ -66,18 +65,34 @@
 -j 'java.io.File!exists'
 -j 'java.io.File!listFiles'
 
--j java.util.Timer!schedule'
--j java.util.Timer!cancel'
+-j 'java.util.Timer!schedule'
+-j 'java.util.Timer!cancel'
 
 -j 'java.util.zip.ZipInputStream!read'
 -j 'java.util.zip.ZipInputStream!close'
 -j 'java.util.zip.ZipInputStream!getNextEntry'
 -j 'java.util.zip.ZipInputStream!closeEntry'
 
--j 'java.lang.String*!replaceAll'
--j 'java.lang.String*!substring'
--j 'java.lang.String*!getBytes'
--j 'java.lang.String*!reverse'
--j 'java.lang.String*!indexOf'
--j 'java.lang.String*!valueOf'
--j 'java.lang.String*!append'
+-j 'java.lang.StringBuffer!replaceAll'
+-j 'java.lang.StringBuffer!substring'
+-j 'java.lang.StringBuffer!getBytes'
+-j 'java.lang.StringBuffer!reverse'
+-j 'java.lang.StringBuffer!indexOf'
+-j 'java.lang.StringBuffer!valueOf'
+-j 'java.lang.StringBuffer!append'
+
+-j 'java.lang.String!replaceAll'
+-j 'java.lang.String!substring'
+-j 'java.lang.String!getBytes'
+-j 'java.lang.String!reverse'
+-j 'java.lang.String!indexOf'
+-j 'java.lang.String!valueOf'
+-j 'java.lang.String!append'
+
+-j 'java.lang.StringBuilder!replaceAll'
+-j 'java.lang.StringBuilder!substring'
+-j 'java.lang.StringBuilder!getBytes'
+-j 'java.lang.StringBuilder!reverse'
+-j 'java.lang.StringBuilder!indexOf'
+-j 'java.lang.StringBuilder!valueOf'
+-j 'java.lang.StringBuilder!append'
